@@ -1,0 +1,60 @@
+
+
+Experiments with all combinations of multiple factors, for differential expression analysis with baseline adjustment
+
+
+x<-read.csv("clipboard",sep="\t",header=T)
+
+library("edgeR")
+targets<-read.delim("targets.txt")
+Group <- factor(paste(targets$Treat,targets$Time,sep="."))
+cbind(targets,Group=Group)
+
+
+x <- read.csv("toropi_ptvsmock_0_24hai_numreads.csv",row.names="Name",header=T)
+y<-DGEList(counts=x,group=Group)
+#y$samples
+keep <- rowSums(cpm(y)>2) >= 3 
+y<-y[keep,,keep.lib.sizes=FALSE]
+y<-calcNormFactors(y)
+#y$samples
+
+design<-model.matrix(~0+Group)
+y<-estimateDisp(y, design, robust=TRUE) 
+#plotBCV(y)
+
+colnames(design)<-levels(Group)
+fit<-glmQLFit(y,design, robust=TRUE)
+#plotQLDisp(fit)
+
+#my.contrasts <- #makeContrasts(ptvmock6vs0=(i.6-m.6)-(i.0-m.0),ptvmock12vs0=(i.12-m.12)-(i.0-m.0), ptvmock24vs0=(i.24-m.24)-(i.0-m.0),levels=design)
+
+my.contrasts <- makeContrasts(de12v6=(i.12-i.6)-(m.12-m.6), de24v12=(i.24-i.12)-(m.24-m.12),de24v6=(i.24-i.6)-(m.24-m.6),ptvmock6vs0=(i.6-m.6)-(i.0-m.0),ptvmock12vs0=(i.12-m.12)-(i.0-m.0), ptvmock24vs0=(i.24-m.24)-(i.0-m.0),levels=design)
+
+qlf <- glmQLFTest(fit, contrast=my.contrasts[,"ptvmock6vs0"])
+#ablin
+
+table = topTags(qlf, n=Inf)
+write.csv(table, file = "toptags_LTvNT_qlf_edgeR.csv", col.names = T, row.names = T, sep = ",")
+
+####
+
+Some commands used in this paper 
+ 
+#filtering (sum of 12 or lower)
+CD1 <- CD[rowSums(CD@data)>12,]
+
+#length
+length(CD1@data[,1])
+
+#summary 
+summary(CD@data)
+
+#histogram
+hist(log(CD1@data[,3]))
+
+#correlation 
+cor(CD1@data[,2],CD1@data[,5])
+
+
+
