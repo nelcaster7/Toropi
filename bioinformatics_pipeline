@@ -11,3 +11,5 @@ samtools view -f 4 -bu Mock_0hai_rep2_alignment.bam | samtools view -f 8 -bu - |
 java -jar /opt/picard-tools/picard.jar SamToFastq I=/dev/stdin F=Mock_0hai_rep2_out1.fq.gz F2=Mock_0hai_re2_out2.fq.gz \
 FU=unpaired.fq.gz VALIDATION_STRINGENCY=LENIENT
 
+
+
