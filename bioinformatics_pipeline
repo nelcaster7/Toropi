@@ -1,6 +1,10 @@
-Alignment commands:
+#cleaning EXAMPLE ONLY #TRIMMOMATIC
+java -jar /home/x991954/Trimmomatic-0.36/trimmomatic-0.36.jar PE -phred33 -threads 8 -trimlog logfile_0hai_rep3 761_LIB5373_LDI4426_GTGAAA_L005_R1.fastq.gz \
+761_LIB5373_LDI4426_GTGAAA_L005_R2.fastq.gz 761_LIB5373_LDI4426_GTGAAA_L005_R1_trim_paired.fastq.gz \
+761_LIB5373_LDI4426_GTGAAA_L005_R1_trim_unpaired.fastq.gz 761_LIB5373_LDI4426_GTGAAA_L005_R2_trim_paired.fastq.gz \
+761_LIB5373_LDI4426_GTGAAA_L005_R2_trim_unpaired.fastq.gz ILLUMINACLIP:/data/nelzo.data/Alice_toropi/TruSeq3-PE-2.fa:2:40:15 MINLEN:36 &
 
-#aligning reads against reference seq
+#aligning reads against transcriptome reference seq #example only
 bowtie2 -x /backup/refseq_nelzo/iwgsc_refseqv1.cdna/iwgsc_refseq.cdna -p 16 -1 \
 /data/nelzo.data/Alice_toropi/FASTQ_files/Mock_toropi/Mock_0hai/Mock_0hai_rep1/761_LIB4970_LDI4015_CGATGT_L001_R1_paired.fastq.gz \
 -2 /data/nelzo.data/Alice_toropi/FASTQ_files/Mock_toropi/Mock_0hai/Mock_0hai_rep1/761_LIB4970_LDI4015_CGATGT_L001_R2_paired.fastq.gz --no-discordant  | \
@@ -11,5 +15,7 @@ samtools view -f 4 -bu Mock_0hai_rep2_alignment.bam | samtools view -f 8 -bu - |
 java -jar /opt/picard-tools/picard.jar SamToFastq I=/dev/stdin F=Mock_0hai_rep2_out1.fq.gz F2=Mock_0hai_re2_out2.fq.gz \
 FU=unpaired.fq.gz VALIDATION_STRINGENCY=LENIENT
 
-
+#quantifying reads
+salmon quant --libType IU --alignments Mock_0hai_rep1.bam --targets /public_data/triticum+puccinia.triticinia/cdna/ensemble-35/triticum_puccinia_triticina_cdna_35.fa \
+--threads 16 --bootStrap 100 --biasCorrect --useErrorModel --output Mock_0hai_rep1 &
 
