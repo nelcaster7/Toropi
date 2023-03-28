@@ -2,27 +2,39 @@
 
 Experiments with all combinations of multiple factors, for differential expression analysis with baseline adjustment
 
-#Data were assigned to an object
-x<-read.csv("clipboard",sep="\t",header=T)
 
 #The edgeR tool was loaded
 library("edgeR")
+
+#data frame describing treatment and time assigned to object "targets" 
 targets<-read.delim("targets.txt")
+
+#Experimental factors Treatment and Time were combined into Group 
 Group <- factor(paste(targets$Treat,targets$Time,sep="."))
 cbind(targets,Group=Group)
 
-
+#data is assigned to an object
 x <- read.csv("toropi_ptvsmock_0_24hai_numreads.csv",row.names="Name",header=T)
+
+#We assigned the counts and the group in a list-based data object 
 y<-DGEList(counts=x,group=Group)
 #y$samples
+
+#samples with low numbers of reads were filtered out.
 keep <- rowSums(cpm(y)>2) >= 3 
 y<-y[keep,,keep.lib.sizes=FALSE]
+
+#library sizes were normalized 
 y<-calcNormFactors(y)
 #y$samples
 
+#the design matrix is constructed using the model.matrix function 
 design<-model.matrix(~0+Group)
+
+#Genewise dispersion was estimated, robustified against potential outlier genes
 y<-estimateDisp(y, design, robust=TRUE) 
 #plotBCV(y)
+
 
 colnames(design)<-levels(Group)
 fit<-glmQLFit(y,design, robust=TRUE)
