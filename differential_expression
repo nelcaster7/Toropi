@@ -2,9 +2,10 @@
 
 Experiments with all combinations of multiple factors, for differential expression analysis with baseline adjustment
 
-
+#Data were assigned to an object
 x<-read.csv("clipboard",sep="\t",header=T)
 
+#The edgeR tool was loaded
 library("edgeR")
 targets<-read.delim("targets.txt")
 Group <- factor(paste(targets$Treat,targets$Time,sep="."))
@@ -27,7 +28,8 @@ colnames(design)<-levels(Group)
 fit<-glmQLFit(y,design, robust=TRUE)
 #plotQLDisp(fit)
 
-#my.contrasts <- #makeContrasts(ptvmock6vs0=(i.6-m.6)-(i.0-m.0),ptvmock12vs0=(i.12-m.12)-(i.0-m.0), ptvmock24vs0=(i.24-m.24)-(i.0-m.0),levels=design)
+
+my.contrasts <- #makeContrasts(ptvmock6vs0=(i.6-m.6)-(i.0-m.0),ptvmock12vs0=(i.12-m.12)-(i.0-m.0), ptvmock24vs0=(i.24-m.24)-(i.0-m.0),levels=design)
 
 my.contrasts <- makeContrasts(de12v6=(i.12-i.6)-(m.12-m.6), de24v12=(i.24-i.12)-(m.24-m.12),de24v6=(i.24-i.6)-(m.24-m.6),ptvmock6vs0=(i.6-m.6)-(i.0-m.0),ptvmock12vs0=(i.12-m.12)-(i.0-m.0), ptvmock24vs0=(i.24-m.24)-(i.0-m.0),levels=design)
 
