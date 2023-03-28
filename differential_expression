@@ -6,7 +6,7 @@ Experiments with all combinations of multiple factors, for differential expressi
 #The edgeR tool was loaded
 library("edgeR")
 
-#data frame describing treatment and time assigned to object "targets" 
+#data frame describing treatment and time was assigned to an object "targets" 
 targets<-read.delim("targets.txt")
 
 #Experimental factors Treatment and Time were combined into Group 
