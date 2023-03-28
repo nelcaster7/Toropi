@@ -35,12 +35,14 @@ design<-model.matrix(~0+Group)
 y<-estimateDisp(y, design, robust=TRUE) 
 #plotBCV(y)
 
-
+#Each Treatment-Time combination is treated as a group:
 colnames(design)<-levels(Group)
+
+#The Quasi-Likelihood dispersions around the dispersion trend was then estimated using glmQLFit function 
 fit<-glmQLFit(y,design, robust=TRUE)
 #plotQLDisp(fit)
 
-
+#Comparisons were made using the makeContrasts function of edgeR implementing baseline adjustment. The baseline here is the differences between inoculated and mock at 0 timepoint
 my.contrasts <- #makeContrasts(ptvmock6vs0=(i.6-m.6)-(i.0-m.0),ptvmock12vs0=(i.12-m.12)-(i.0-m.0), ptvmock24vs0=(i.24-m.24)-(i.0-m.0),levels=design)
 
 my.contrasts <- makeContrasts(de12v6=(i.12-i.6)-(m.12-m.6), de24v12=(i.24-i.12)-(m.24-m.12),de24v6=(i.24-i.6)-(m.24-m.6),ptvmock6vs0=(i.6-m.6)-(i.0-m.0),ptvmock12vs0=(i.12-m.12)-(i.0-m.0), ptvmock24vs0=(i.24-m.24)-(i.0-m.0),levels=design)
@@ -48,6 +50,7 @@ my.contrasts <- makeContrasts(de12v6=(i.12-i.6)-(m.12-m.6), de24v12=(i.24-i.12)-
 qlf <- glmQLFTest(fit, contrast=my.contrasts[,"ptvmock6vs0"])
 #ablin
 
+#Results were extracted using toptags
 table = topTags(qlf, n=Inf)
 write.csv(table, file = "toptags_LTvNT_qlf_edgeR.csv", col.names = T, row.names = T, sep = ",")
 
